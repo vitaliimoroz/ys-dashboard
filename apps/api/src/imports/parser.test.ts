@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import {
   inferChartConfig,
   parseCsvBuffer,
+  parseXlsxSheetsBuffer,
   parseTabularFile,
   parseXlsxBuffer,
 } from "./parser.js";
@@ -37,6 +38,25 @@ describe("tabular import parser", () => {
     expect(parsed.sheetName).toBe("Campaigns");
     expect(parsed.rows).toHaveLength(2);
     expect(parsed.rows[1]).toEqual({ Campaign: "B", Result: 1699 });
+  });
+
+  it("parses every non-empty worksheet using populated columns", async () => {
+    const workbook = new ExcelJS.Workbook();
+    workbook.addWorksheet("Empty");
+    const line = workbook.addWorksheet("Line");
+    line.addRow(["Campaign", "Result", "Series"]);
+    line.addRow(["A", 10, "Direct"]);
+    const pie = workbook.addWorksheet("Pie");
+    pie.addRow(["Campaign", "Result"]);
+    pie.addRow(["A", 10]);
+    pie.getCell("D1").numFmt = "0";
+    const buffer = Buffer.from(await workbook.xlsx.writeBuffer());
+
+    const parsed = await parseXlsxSheetsBuffer(buffer);
+
+    expect(parsed.map((table) => table.sheetName)).toEqual(["Line", "Pie"]);
+    expect(parsed.map((table) => table.columns.length)).toEqual([3, 2]);
+    expect(parsed[1]?.rows).toEqual([{ Campaign: "A", Result: 10 }]);
   });
 
   it("routes by extension and rejects unsupported formats", async () => {

@@ -71,25 +71,32 @@ export function parseCsvBuffer(buffer: Buffer): ParsedTable {
   return toTable(records, null);
 }
 
-export async function parseXlsxBuffer(buffer: Buffer): Promise<ParsedTable> {
+export async function parseXlsxSheetsBuffer(buffer: Buffer): Promise<ParsedTable[]> {
   const workbook = new ExcelJS.Workbook();
   await workbook.xlsx.load(Uint8Array.from(buffer).buffer);
-  const worksheet = workbook.worksheets.find((sheet) => sheet.rowCount > 0);
+  const worksheets = workbook.worksheets.filter((sheet) => sheet.actualRowCount > 0);
 
-  if (!worksheet) {
+  if (worksheets.length === 0) {
     throw new Error("The workbook does not contain a non-empty worksheet");
   }
 
-  const records: unknown[][] = [];
-  worksheet.eachRow({ includeEmpty: false }, (row) => {
-    records.push(
-      Array.from({ length: worksheet.columnCount }, (_, index) =>
-        row.getCell(index + 1).value,
-      ),
-    );
-  });
+  return worksheets.map((worksheet) => {
+    const records: unknown[][] = [];
+    worksheet.eachRow({ includeEmpty: false }, (row) => {
+      records.push(
+        Array.from({ length: worksheet.actualColumnCount }, (_, index) =>
+          row.getCell(index + 1).value,
+        ),
+      );
+    });
 
-  return toTable(records, worksheet.name);
+    return toTable(records, worksheet.name);
+  });
+}
+
+export async function parseXlsxBuffer(buffer: Buffer): Promise<ParsedTable> {
+  const [firstSheet] = await parseXlsxSheetsBuffer(buffer);
+  return firstSheet;
 }
 
 export async function parseTabularFile(

@@ -4,7 +4,7 @@ import { fileURLToPath } from "node:url";
 import { eq } from "drizzle-orm";
 import { createDb } from "./db/client.js";
 import { datasets } from "./db/schema.js";
-import { parseTabularFile } from "./imports/parser.js";
+import { parseCsvBuffer, parseXlsxSheetsBuffer } from "./imports/parser.js";
 
 const dataDirectory = fileURLToPath(new URL("../data/", import.meta.url));
 
@@ -23,33 +23,40 @@ async function seed() {
   }
 
   for (const sourceFilename of files) {
-    const [existing] = await db
-      .select({ id: datasets.id })
+    const existing = await db
+      .select({ sheetName: datasets.sheetName })
       .from(datasets)
-      .where(eq(datasets.sourceFilename, sourceFilename))
-      .limit(1);
-
-    if (existing) {
-      console.log(`Skipping existing dataset: ${sourceFilename}`);
-      continue;
-    }
+      .where(eq(datasets.sourceFilename, sourceFilename));
 
     const bytes = await readFile(join(dataDirectory, sourceFilename));
-    const parsed = await parseTabularFile(sourceFilename, bytes);
     const extension = extname(sourceFilename).toLowerCase();
-    const sourceKind = extension === "csv" ? "csv" : "xlsx";
+    const sourceKind = extension === ".csv" ? "csv" : "xlsx";
+    const parsedTables =
+      sourceKind === "csv"
+        ? [parseCsvBuffer(bytes)]
+        : await parseXlsxSheetsBuffer(bytes);
 
-    await db.insert(datasets).values({
-      name: basename(sourceFilename, extension),
-      sourceFilename,
-      sheetName: parsed.sheetName,
-      sourceKind,
-      columns: parsed.columns,
-      rowCount: parsed.rows.length,
-      rows: parsed.rows,
-    });
+    for (const parsed of parsedTables) {
+      if (existing.some((dataset) => dataset.sheetName === parsed.sheetName)) {
+        console.log(`Skipping existing dataset: ${sourceFilename} (${parsed.sheetName ?? "CSV"})`);
+        continue;
+      }
 
-    console.log(`Imported ${sourceFilename}: ${parsed.rows.length} rows`);
+      const baseName = basename(sourceFilename, extension);
+      await db.insert(datasets).values({
+        name: parsed.sheetName ? `${baseName} - ${parsed.sheetName}` : baseName,
+        sourceFilename,
+        sheetName: parsed.sheetName,
+        sourceKind,
+        columns: parsed.columns,
+        rowCount: parsed.rows.length,
+        rows: parsed.rows,
+      });
+
+      console.log(
+        `Imported ${sourceFilename} (${parsed.sheetName ?? "CSV"}): ${parsed.rows.length} rows`,
+      );
+    }
   }
 }
 
