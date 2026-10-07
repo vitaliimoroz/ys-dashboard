@@ -7,4 +7,4 @@ const host = process.env.HOST ?? "0.0.0.0";
 const app = Fastify({ logger: true });
 registerRoutes(app);
 
-await app.listen({ port, host });
+app.listen({ port, host });
