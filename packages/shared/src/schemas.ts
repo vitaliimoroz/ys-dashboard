@@ -65,6 +65,7 @@ export type WidgetDetail = z.infer<typeof widgetDetailSchema>;
 export const createWidgetBodySchema = z.object({
   type: widgetTypeSchema,
   title: z.string().min(1).max(120).optional(),
+  datasetId: z.string().uuid().optional(),
 });
 
 export type CreateWidgetBody = z.infer<typeof createWidgetBodySchema>;

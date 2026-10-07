@@ -13,8 +13,9 @@
     "db:seed": "tsx src/seed.ts"
   },
   "dependencies": {
-    "@ys-dashboard/shared": "*",
+    "@fastify/cors": "^11.3.0",
     "@neondatabase/serverless": "^1.0.2",
+    "@ys-dashboard/shared": "*",
     "csv-parse": "^6.1.0",
     "drizzle-orm": "^0.44.7",
     "exceljs": "^4.4.0",

@@ -130,11 +130,17 @@ export function registerRoutes(app: FastifyInstance, options: RouteOptions = {})
       return reply.code(400).send({ error: parsed.error.issues[0]?.message ?? "Invalid body" });
     }
 
-    const { type, title } = parsed.data;
+    const { type, title, datasetId } = parsed.data;
     const routeStore = getStore();
-    const dataset = isChartWidgetType(type) ? await routeStore.getFirstDataset() : null;
+    const dataset = isChartWidgetType(type)
+      ? datasetId
+        ? await routeStore.getDataset(datasetId)
+        : await routeStore.getFirstDataset()
+      : null;
     if (isChartWidgetType(type) && !dataset) {
-      return reply.code(409).send({ error: "Import a dataset before adding a chart" });
+      return datasetId
+        ? reply.code(404).send({ error: "Dataset not found" })
+        : reply.code(409).send({ error: "Import a dataset before adding a chart" });
     }
 
     const existingWidgets = await routeStore.listWidgets();

@@ -126,6 +126,8 @@ export function inferChartConfig(
   const valueKey =
     findNamedColumn(columns, ["result", "value", "amount", "count", "total"]) ??
     columns.find((column) => rows.some((row) => typeof row[column] === "number"));
+  const campaignKey = findNamedColumn(columns, ["campaign"]);
+  const dateKey = findNamedColumn(columns, ["date", "day", "month", "time", "timestamp"]);
   const seriesKey = findNamedColumn(columns, ["series", "metric", "channel"]);
   const numericColumns = columns.filter(
     (column) =>
@@ -136,6 +138,14 @@ export function inferChartConfig(
 
   if (type === "pie") {
     return { categoryKey, valueKey: valueKey ?? numericColumns[0] };
+  }
+
+  if (type === "line" && dateKey && campaignKey && dateKey !== campaignKey) {
+    return {
+      xKey: dateKey,
+      ...(valueKey ? { yKey: valueKey } : {}),
+      seriesKey: campaignKey,
+    };
   }
 
   if (type === "stacked_bar" && !seriesKey && numericColumns.length > 1) {

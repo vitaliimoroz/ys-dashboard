@@ -24,7 +24,7 @@ async function seed() {
 
   for (const sourceFilename of files) {
     const existing = await db
-      .select({ sheetName: datasets.sheetName })
+      .select({ id: datasets.id, sheetName: datasets.sheetName, sourceKind: datasets.sourceKind })
       .from(datasets)
       .where(eq(datasets.sourceFilename, sourceFilename));
 
@@ -37,14 +37,25 @@ async function seed() {
         : await parseXlsxSheetsBuffer(bytes);
 
     for (const parsed of parsedTables) {
-      if (existing.some((dataset) => dataset.sheetName === parsed.sheetName)) {
-        console.log(`Skipping existing dataset: ${sourceFilename} (${parsed.sheetName ?? "CSV"})`);
+      const baseName = basename(sourceFilename, extension);
+      const name = parsed.sheetName ? `${baseName} - ${parsed.sheetName}` : baseName;
+      const existingDataset = existing.find((dataset) => dataset.sheetName === parsed.sheetName);
+
+      if (existingDataset) {
+        if (existingDataset.sourceKind !== sourceKind) {
+          await db
+            .update(datasets)
+            .set({ name, sourceKind })
+            .where(eq(datasets.id, existingDataset.id));
+          console.log(`Updated dataset metadata: ${sourceFilename} (${parsed.sheetName ?? "CSV"})`);
+        } else {
+          console.log(`Skipping existing dataset: ${sourceFilename} (${parsed.sheetName ?? "CSV"})`);
+        }
         continue;
       }
 
-      const baseName = basename(sourceFilename, extension);
       await db.insert(datasets).values({
-        name: parsed.sheetName ? `${baseName} - ${parsed.sheetName}` : baseName,
+        name,
         sourceFilename,
         sheetName: parsed.sheetName,
         sourceKind,

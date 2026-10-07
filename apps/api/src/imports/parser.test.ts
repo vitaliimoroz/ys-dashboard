@@ -80,6 +80,14 @@ describe("chart config inference", () => {
     ).toEqual({ xKey: "Campaign", yKey: "Result", seriesKey: "Series" });
   });
 
+  it("plots campaigns as series over dates for the line workbook shape", () => {
+    expect(
+      inferChartConfig("line", ["Campaign", "Date", "Result"], [
+        { Campaign: "A", Date: "2026-01-01", Result: 5 },
+      ]),
+    ).toEqual({ xKey: "Date", yKey: "Result", seriesKey: "Campaign" });
+  });
+
   it("uses numeric columns as stacks for wide-form data", () => {
     expect(
       inferChartConfig("stacked_bar", ["Campaign", "Direct", "Organic"], [
