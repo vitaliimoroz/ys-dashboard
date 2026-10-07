@@ -1,5 +1,7 @@
 import Fastify from "fastify";
+import cors from "@fastify/cors";
 import { describe, expect, it } from "vitest";
+import { createCorsOptions } from "./cors.js";
 import { registerRoutes } from "./application.js";
 import type { DatasetSummary } from "@ys-dashboard/shared";
 import type {
@@ -100,6 +102,27 @@ function createTestStore(): DashboardStore {
 }
 
 describe("Fastify app", () => {
+  it.each(["PATCH", "DELETE"])("allows browser preflight for %s widget requests", async (method) => {
+    const app = Fastify();
+    await app.register(cors, createCorsOptions(["https://dashboard.example"]));
+    registerRoutes(app, { store: createTestStore() });
+
+    const response = await app.inject({
+      method: "OPTIONS",
+      url: "/api/widgets/00000000-0000-4000-8000-000000000001",
+      headers: {
+        origin: "https://dashboard.example",
+        "access-control-request-method": method,
+        "access-control-request-headers": "content-type",
+      },
+    });
+
+    expect(response.statusCode).toBe(204);
+    expect(response.headers["access-control-allow-origin"]).toBe("https://dashboard.example");
+    expect(response.headers["access-control-allow-methods"]).toContain(method);
+    await app.close();
+  });
+
   it("registers a health route that returns ok", async () => {
     const app = Fastify();
     registerRoutes(app);
