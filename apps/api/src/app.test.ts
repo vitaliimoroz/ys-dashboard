@@ -1,9 +1,11 @@
-import { afterAll, describe, expect, it } from "vitest";
-import { buildApp } from "./application.js";
+import Fastify from "fastify";
+import { describe, expect, it } from "vitest";
+import { registerRoutes } from "./application.js";
 
 describe("Fastify app", () => {
-  it("exports a Fastify server and serves the health route", async () => {
-    const app = buildApp();
+  it("registers a health route that returns ok", async () => {
+    const app = Fastify();
+    registerRoutes(app);
     const response = await app.inject({ method: "GET", url: "/health" });
 
     expect(response.statusCode).toBe(200);
