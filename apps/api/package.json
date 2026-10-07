@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/server.ts",
-    "build": "tsc",
+    "build": "npm run build -w @ys-dashboard/shared && tsc",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "db:generate": "npm run build -w @ys-dashboard/shared && drizzle-kit generate --config drizzle.config.ts",
