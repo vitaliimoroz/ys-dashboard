@@ -4,6 +4,7 @@ import { createDb, type Database } from "./client.js";
 import { datasets, widgets } from "./schema.js";
 
 export type DatasetRow = typeof datasets.$inferSelect;
+export type NewDatasetRow = typeof datasets.$inferInsert;
 export type WidgetRow = typeof widgets.$inferSelect;
 export type NewWidgetRow = typeof widgets.$inferInsert;
 export type WidgetPatch = Partial<
@@ -12,6 +13,7 @@ export type WidgetPatch = Partial<
 
 export interface DashboardStore {
   listDatasetSummaries(): Promise<DatasetSummary[]>;
+  createDataset(input: NewDatasetRow): Promise<DatasetRow>;
   getFirstDataset(): Promise<DatasetRow | null>;
   getDataset(id: string): Promise<DatasetRow | null>;
   listWidgets(): Promise<WidgetRow[]>;
@@ -36,6 +38,11 @@ export function createDashboardStore(db: Database = createDb()): DashboardStore 
         })
         .from(datasets)
         .orderBy(asc(datasets.name), asc(datasets.sheetName)),
+    createDataset: async (input) => {
+      const [dataset] = await db.insert(datasets).values(input).returning();
+      if (!dataset) throw new Error("Dataset insert returned no row");
+      return dataset;
+    },
     getFirstDataset: async () => {
       const [dataset] = await db
         .select()

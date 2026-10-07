@@ -1,0 +1,44 @@
+.widget-card {
+  min-width: 0;
+  height: 376px;
+  display: flex;
+  flex-direction: column;
+  padding: 15px 16px 13px;
+  overflow: hidden;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  box-shadow: 0 2px 5px rgba(30,55,40,.035);
+  animation: appear .28s ease-out both;
+}
+
+.widget-card--text { min-height: 376px; }
+.widget-card__header { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; min-height: 37px; }
+.widget-title-wrap { min-width: 0; }
+.widget-card__header h2 { overflow: hidden; margin: 0; color: #29382f; font: 500 15px/1.25 "Space Grotesk", sans-serif; text-overflow: ellipsis; white-space: nowrap; }
+.widget-type-label { display: block; margin-top: 3px; color: #97a19b; font-size: 9px; text-transform: capitalize; }
+.widget-title-input { width: min(270px, 55vw); height: 25px; border: 1px solid #b4cbc0; border-radius: 3px; padding: 2px 5px; color: #29382f; font: 500 14px "Space Grotesk", sans-serif; }
+.widget-actions { display: flex; gap: 2px; margin: -5px -5px 0 0; }
+.widget-card__source { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 29px; margin-top: 6px; color: #8b968f; font-size: 9px; }
+.widget-card__source label { position: relative; display: inline-flex; align-items: center; gap: 5px; min-width: 0; }
+.widget-card__source label > svg:first-child { flex: 0 0 auto; color: #698b7b; }
+.widget-card__source label > svg:last-child { position: absolute; right: 4px; pointer-events: none; }
+.widget-card__source select { max-width: min(290px, 36vw); height: 25px; appearance: none; border: 1px solid transparent; border-radius: 3px; padding: 0 20px 0 4px; background: transparent; color: #68756d; font-size: 9px; }
+.widget-card__source select:hover { border-color: #dbe5dd; background: #f8faf8; }
+.row-count { flex: 0 0 auto; }
+.widget-status { display: flex; align-items: center; gap: 6px; margin: 5px 0 0; color: #77847c; font-size: 10px; }
+.widget-error { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 6px; padding: 5px 7px; border: 1px solid #f0d1ca; border-radius: 4px; background: #fff5f2; color: #9d4939; font-size: 10px; }
+.widget-error .icon-button { flex: 0 0 auto; width: 24px; height: 24px; color: #9d4939; }
+.widget-load-card h2 { margin: 0; color: #29382f; font: 500 15px/1.25 "Space Grotesk", sans-serif; }
+.text-widget-content { min-height: 0; flex: 1; display: flex; padding-top: 13px; }
+.text-widget-content textarea { display: block; width: 100%; min-height: 0; flex: 1; resize: none; border: 1px solid #e5ebe5; border-radius: 4px; padding: 11px; background: #fbfcfb; color: #39473e; font-size: 12px; line-height: 1.55; }
+.text-widget-content textarea::placeholder { color: #a1aaa4; }
+
+@media (max-width: 1000px) {
+  .widget-card__source select { max-width: 26vw; }
+}
+
+@media (max-width: 700px) {
+  .widget-card { height: 340px; min-height: 340px; padding: 13px 12px; }
+  .widget-card__source select { max-width: 58vw; }
+}

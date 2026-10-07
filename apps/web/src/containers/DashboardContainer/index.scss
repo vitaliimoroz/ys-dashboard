@@ -1,0 +1,6 @@
+.dashboard-loading-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.dashboard-loading-grid > div { height: 376px; border: 1px solid #e2e9e3; border-radius: 6px; background: rgba(255,255,255,.76); animation: breathe 1.2s ease-in-out infinite alternate; }
+.page-footnote { display: flex; align-items: center; gap: 8px; margin-top: 19px; color: #929d96; font-size: 9px; }
+.footnote-line { width: 15px; height: 1px; background: #c1ccc4; }
+@media (max-width: 1000px) { .dashboard-loading-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 700px) { .dashboard-loading-grid { grid-template-columns: minmax(0, 1fr); } .dashboard-loading-grid > div { height: 340px; } }

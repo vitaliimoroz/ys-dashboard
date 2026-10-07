@@ -2,7 +2,6 @@ import type { FastifyInstance } from "fastify";
 import {
   chartConfigSchema,
   createWidgetBodySchema,
-  isChartWidgetType,
   patchWidgetBodySchema,
   widgetListItemSchema,
   type ChartConfig,
@@ -10,7 +9,7 @@ import {
   type WidgetDetail,
 } from "@ys-dashboard/shared";
 import { inferChartConfig, type ParsedRow } from "./imports/parser.js";
-import { createDashboardStore, type DashboardStore, type WidgetRow } from "./db/store.js";
+import { createDashboardStore, type DashboardStore, type NewDatasetRow, type WidgetRow } from "./db/store.js";
 
 interface RouteOptions {
   store?: DashboardStore;
@@ -100,6 +99,86 @@ const defaultTitles = {
   text: "Text",
 } as const;
 
+function randomInt(min: number, max: number): number {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function createRandomChartDataset(type: ChartWidgetType, title: string): NewDatasetRow {
+  const count = 6;
+  const categories = Array.from({ length: count }, (_, index) => `Category ${index + 1}`);
+
+  if (type === "line") {
+    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun"];
+    const rows = months.flatMap((month) =>
+      ["Series A", "Series B", "Series C"].map((series) => ({
+        Month: month,
+        Series: series,
+        Value: randomInt(15, 100),
+      })),
+    );
+    return {
+      name: `${title} sample data`,
+      sourceFilename: "generated:line",
+      sheetName: null,
+      sourceKind: "generated",
+      columns: ["Month", "Series", "Value"],
+      rowCount: rows.length,
+      rows,
+    };
+  }
+
+  if (type === "pie") {
+    const rows = categories.map((Category) => ({ Category, Value: randomInt(10, 100) }));
+    return {
+      name: `${title} sample data`,
+      sourceFilename: "generated:pie",
+      sheetName: null,
+      sourceKind: "generated",
+      columns: ["Category", "Value"],
+      rowCount: rows.length,
+      rows,
+    };
+  }
+
+  if (type === "stacked_bar") {
+    const rows = categories.map((Brand) => ({
+      Brand,
+      Positive: randomInt(15, 100),
+      Neutral: randomInt(15, 100),
+      Negative: randomInt(15, 100),
+    }));
+    return {
+      name: `${title} sample data`,
+      sourceFilename: "generated:stacked_bar",
+      sheetName: null,
+      sourceKind: "generated",
+      columns: ["Brand", "Positive", "Neutral", "Negative"],
+      rowCount: rows.length,
+      rows,
+    };
+  }
+
+  const rows = categories.map((Category) => ({ Category, Value: randomInt(15, 100) }));
+  return {
+    name: `${title} sample data`,
+    sourceFilename: "generated:bar",
+    sheetName: null,
+    sourceKind: "generated",
+    columns: ["Category", "Value"],
+    rowCount: rows.length,
+    rows,
+  };
+}
+
+function randomChartConfig(type: ChartWidgetType): ChartConfig {
+  if (type === "pie") return { categoryKey: "Category", valueKey: "Value" };
+  if (type === "line") return { xKey: "Month", yKey: "Value", seriesKey: "Series" };
+  if (type === "stacked_bar") {
+    return { xKey: "Brand", stackKeys: ["Positive", "Neutral", "Negative"] };
+  }
+  return { xKey: "Category", yKey: "Value" };
+}
+
 export function registerRoutes(app: FastifyInstance, options: RouteOptions = {}) {
   let store = options.store;
   const getStore = () => {
@@ -130,29 +209,20 @@ export function registerRoutes(app: FastifyInstance, options: RouteOptions = {})
       return reply.code(400).send({ error: parsed.error.issues[0]?.message ?? "Invalid body" });
     }
 
-    const { type, title, datasetId } = parsed.data;
+    const { type, title } = parsed.data;
     const routeStore = getStore();
-    const dataset = isChartWidgetType(type)
-      ? datasetId
-        ? await routeStore.getDataset(datasetId)
-        : await routeStore.getFirstDataset()
+    const chartType = type === "text" ? null : type;
+    const chartTitle = title ?? defaultTitles[type];
+    const dataset = chartType
+      ? await routeStore.createDataset(createRandomChartDataset(chartType, chartTitle))
       : null;
-    if (isChartWidgetType(type) && !dataset) {
-      return datasetId
-        ? reply.code(404).send({ error: "Dataset not found" })
-        : reply.code(409).send({ error: "Import a dataset before adding a chart" });
-    }
-
     const existingWidgets = await routeStore.listWidgets();
     const widget = await routeStore.createWidget({
       type,
-      title: title ?? defaultTitles[type],
+      title: chartTitle,
       position: existingWidgets.reduce((max, item) => Math.max(max, item.position), -1) + 1,
       datasetId: dataset?.id ?? null,
-      chartConfig:
-        dataset && isChartWidgetType(type)
-          ? inferChartConfig(type, dataset.columns, dataset.rows)
-          : null,
+      chartConfig: chartType ? randomChartConfig(chartType) : null,
       content: type === "text" ? "" : null,
     });
 

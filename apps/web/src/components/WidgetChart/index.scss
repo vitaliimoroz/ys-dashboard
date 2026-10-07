@@ -1,0 +1,20 @@
+.chart-area {
+  width: 100%;
+  min-height: 0;
+  flex: 1;
+  margin-top: 9px;
+}
+
+.chart-area--pie { min-height: 0; }
+
+.chart-empty {
+  min-height: 0;
+  flex: 1;
+  display: grid;
+  place-items: center;
+  margin-top: 8px;
+  border: 1px dashed #dfe7e0;
+  border-radius: 4px;
+  color: #89958d;
+  font-size: 11px;
+}

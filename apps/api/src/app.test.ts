@@ -5,6 +5,7 @@ import type { DatasetSummary } from "@ys-dashboard/shared";
 import type {
   DashboardStore,
   DatasetRow,
+  NewDatasetRow,
   NewWidgetRow,
   WidgetPatch,
   WidgetRow,
@@ -41,6 +42,21 @@ function createTestStore(): DashboardStore {
         columns,
         rowCount,
       }));
+    },
+    async createDataset(input: NewDatasetRow) {
+      const created: DatasetRow = {
+        id: "00000000-0000-4000-8000-000000000099",
+        name: input.name,
+        sourceFilename: input.sourceFilename,
+        sheetName: input.sheetName ?? null,
+        sourceKind: input.sourceKind,
+        columns: input.columns,
+        rowCount: input.rowCount,
+        rows: input.rows,
+        createdAt: new Date("2026-01-01T00:00:00.000Z"),
+      };
+      datasets.push(created);
+      return created;
     },
     async getFirstDataset() {
       return datasets[0] ?? null;
@@ -125,7 +141,7 @@ describe("Fastify app", () => {
     await app.close();
   });
 
-  it("creates a chart widget from the first dataset", async () => {
+  it("creates a chart widget with randomized generated data", async () => {
     const app = Fastify();
     registerRoutes(app, { store: createTestStore() });
 
@@ -139,17 +155,43 @@ describe("Fastify app", () => {
     expect(response.json()).toMatchObject({
       type: "pie",
       title: "Pie chart",
-      datasetId,
-      chartConfig: { categoryKey: "Campaign", valueKey: "Result" },
+      datasetId: "00000000-0000-4000-8000-000000000099",
+      chartConfig: { categoryKey: "Category", valueKey: "Value" },
       payload: {
         kind: "chart",
-        xKey: "Campaign",
-        points: [
-          { Campaign: "A", Result: 10 },
-          { Campaign: "B", Result: 20 },
-        ],
+        xKey: "Category",
       },
     });
+    expect(response.json().payload.points).toHaveLength(6);
+    expect(response.json().payload.points[0]).toHaveProperty("Value");
+    expect(response.json().payload.points[0]).not.toHaveProperty("Campaign");
+    await app.close();
+  });
+
+  it.each([
+    ["line", ["Month", "Series", "Value"], 18],
+    ["stacked_bar", ["Brand", "Positive", "Neutral", "Negative"], 6],
+    ["bar", ["Category", "Value"], 6],
+  ] as const)("creates %s charts from generated data", async (type, expectedColumns, expectedRows) => {
+    const app = Fastify();
+    registerRoutes(app, { store: createTestStore() });
+
+    const response = await app.inject({
+      method: "POST",
+      url: "/api/widgets",
+      payload: { type },
+    });
+
+    expect(response.statusCode).toBe(201);
+    expect(response.json().datasetId).not.toBe(datasetId);
+    expect(response.json().payload.kind).toBe("chart");
+    expect(response.json().payload.points).toHaveLength(expectedRows);
+    const firstPoint = response.json().payload.points[0] as Record<string, string | number>;
+    expect(Object.keys(firstPoint)).toEqual(expectedColumns);
+    for (const value of Object.values(firstPoint)) {
+      if (typeof value === "number") expect(value).toBeGreaterThanOrEqual(15);
+      if (typeof value === "number") expect(value).toBeLessThanOrEqual(100);
+    }
     await app.close();
   });
 

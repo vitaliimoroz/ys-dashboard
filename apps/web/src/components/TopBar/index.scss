@@ -1,0 +1,20 @@
+.topbar { height: 60px; padding: 0 36px; border-bottom: 1px solid #e0e7e1; background: rgba(255,255,255,.89); display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+.breadcrumbs { display: flex; align-items: center; gap: 10px; color: #849089; font-size: 11px; }
+.breadcrumbs strong { color: #39463f; font-weight: 600; }
+.breadcrumb-separator { color: #bec7c1; }
+.topbar-actions { display: flex; align-items: center; gap: 13px; }
+.updated-label { color: #7d8a82; font-size: 10px; }
+.updated-label::before { content: ""; display: inline-block; width: 6px; height: 6px; background: #5da187; border-radius: 50%; margin: 0 7px 1px 0; }
+.add-widget-wrap { position: relative; }
+.widget-menu { position: absolute; z-index: 10; right: 0; top: calc(100% + 7px); width: 194px; padding: 5px; background: white; border: 1px solid var(--line); border-radius: 6px; box-shadow: 0 12px 30px rgba(28,48,39,.15); }
+.widget-menu button { display: flex; align-items: center; gap: 10px; width: 100%; padding: 9px 10px; border: 0; border-radius: 4px; background: transparent; color: #3c4a42; text-align: left; font-size: 11px; }
+.widget-menu button:hover { background: #f2f6f2; color: var(--green); }
+.spin { animation: spin 1s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+@media (max-width: 1000px) { .topbar { padding: 0 24px; } }
+@media (max-width: 700px) {
+  .topbar { height: 51px; padding: 0 14px; }
+  .updated-label { display: none; }
+  .topbar-actions { gap: 6px; }
+}
