@@ -40,6 +40,37 @@ import type {
 
 const API_BASE_URL = (import.meta.env.VITE_API_URL ?? "").replace(/\/+$/, "");
 const chartColors = ["#28796d", "#d85a48", "#c39136", "#617d8a", "#374c45"];
+const axisDateFormatter = new Intl.DateTimeFormat("en-US", {
+  month: "short",
+  year: "2-digit",
+  timeZone: "UTC",
+});
+const tooltipDateFormatter = new Intl.DateTimeFormat("en-US", {
+  month: "short",
+  day: "numeric",
+  year: "numeric",
+  timeZone: "UTC",
+});
+
+function parseChartDate(value: unknown): Date | null {
+  if (typeof value !== "string") return null;
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? null : date;
+}
+
+function formatAxisDate(value: unknown): string {
+  const date = parseChartDate(value);
+  if (!date) return String(value ?? "");
+  const parts = axisDateFormatter.formatToParts(date);
+  const month = parts.find((part) => part.type === "month")?.value;
+  const year = parts.find((part) => part.type === "year")?.value;
+  return month && year ? `${month} '${year}` : axisDateFormatter.format(date);
+}
+
+function formatTooltipDate(value: unknown): string {
+  const date = parseChartDate(value);
+  return date ? tooltipDateFormatter.format(date) : String(value ?? "");
+}
 
 const widgetChoices: { type: WidgetType; label: string; icon: LucideIcon }[] = [
   { type: "line", label: "Line chart", icon: Activity },
@@ -165,9 +196,9 @@ function WidgetChart({ detail }: { detail: WidgetDetail }) {
         {detail.type === "line" ? (
           <LineChart data={rows} margin={{ top: 8, right: 10, bottom: 0, left: -18 }}>
             <CartesianGrid stroke="#e9eeea" vertical={false} />
-            <XAxis dataKey={payload.xKey} axisLine={false} tickLine={false} tick={{ fill: "#78827d", fontSize: 11 }} />
+            <XAxis dataKey={payload.xKey} axisLine={false} tickLine={false} tick={{ fill: "#78827d", fontSize: 11 }} tickFormatter={formatAxisDate} />
             <YAxis axisLine={false} tickLine={false} tick={{ fill: "#78827d", fontSize: 11 }} />
-            <Tooltip contentStyle={tooltipStyle} />
+            <Tooltip contentStyle={tooltipStyle} labelFormatter={formatTooltipDate} />
             <Legend iconType="circle" wrapperStyle={{ fontSize: 11 }} />
             {series.map((item, index) => (
               <Line key={item.key} type="monotone" dataKey={item.key} name={item.label} stroke={chartColors[index % chartColors.length]} strokeWidth={2.5} dot={false} activeDot={{ r: 4 }} />
