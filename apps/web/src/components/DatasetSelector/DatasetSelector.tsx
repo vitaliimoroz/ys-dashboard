@@ -10,7 +10,7 @@ import "./index.scss";
 interface DatasetSelectorProps {
   detail: WidgetDetail;
   datasets: DatasetSummary[];
-  onPatch(id: string, patch: PatchWidgetBody): Promise<void>;
+  onPatch(patch: PatchWidgetBody): Promise<void>;
 }
 
 export function DatasetSelector({ detail, datasets, onPatch }: DatasetSelectorProps) {
@@ -19,7 +19,7 @@ export function DatasetSelector({ detail, datasets, onPatch }: DatasetSelectorPr
   const selectDataset = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const datasetId = event.target.value || null;
     const selected = datasets.find((dataset) => dataset.id === datasetId);
-    onPatch(detail.id, {
+    onPatch({
       datasetId: selected?.id ?? null,
       chartConfig: selected ? chartConfigFor(detail.type, selected.columns) : {},
     });

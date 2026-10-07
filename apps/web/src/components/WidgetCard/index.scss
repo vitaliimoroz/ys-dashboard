@@ -129,10 +129,27 @@
   color: #a1aaa4;
 }
 
+.widget-skeleton {
+  height: 376px;
+  border: 1px solid #e2e9e3;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.76);
+  animation: breathe 1.2s ease-in-out infinite alternate;
+}
+
+@keyframes breathe {
+  to {
+    background: #eaf0eb;
+  }
+}
+
 @media (max-width: 700px) {
   .widget-card {
     height: 340px;
     min-height: 340px;
     padding: 13px 12px;
+  }
+  .widget-skeleton {
+    height: 340px;
   }
 }

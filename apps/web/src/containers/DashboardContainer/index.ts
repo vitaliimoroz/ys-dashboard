@@ -1,1 +1,1 @@
-export { DashboardContainer } from "./Container";
+export { DashboardContainer } from "./DashboardContainer";

@@ -7,7 +7,7 @@ import { ErrorBanner } from "../../components/ErrorBanner";
 import { PageHeading } from "../../components/PageHeading";
 import { Sidebar } from "../../components/Sidebar";
 import { TopBar } from "../../components/TopBar";
-import { WidgetGrid } from "../../components/WidgetGrid";
+import { WidgetsContainer } from "../WidgetsContainer";
 
 import "./index.scss";
 
@@ -32,7 +32,7 @@ export function DashboardContainer() {
               ) : widgets.length === 0 ? (
                 <EmptyDashboard onAddWidget={() => setMenuOpen(true)} />
               ) : (
-                <WidgetGrid widgets={widgets} />
+                <WidgetsContainer widgets={widgets} />
               )}
             </>
           ) : <DatasetTable datasets={datasets} loading={loading} />}
