@@ -1,0 +1,23 @@
+{
+  "name": "ys-dashboard",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "concurrently -n shared,api,web -c magenta,blue,green \"npm run dev -w @ys-dashboard/shared\" \"npm run dev -w @ys-dashboard/api\" \"npm run dev -w @ys-dashboard/web\"",
+    "build": "npm run build -w @ys-dashboard/shared && npm run build -w @ys-dashboard/api && npm run build -w @ys-dashboard/web",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "db:migrate": "npm run db:migrate -w @ys-dashboard/api"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1",
+    "typescript": "^5.9.3"
+  }
+}
