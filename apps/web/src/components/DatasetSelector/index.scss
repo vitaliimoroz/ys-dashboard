@@ -1,0 +1,47 @@
+.dataset-selector {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-width: 0;
+}
+
+.dataset-selector > svg:first-child {
+  flex: 0 0 auto;
+  color: #698b7b;
+}
+
+.dataset-selector > svg:last-child {
+  position: absolute;
+  right: 4px;
+  pointer-events: none;
+}
+
+.dataset-selector select {
+  max-width: min(290px, 36vw);
+  height: 25px;
+  appearance: none;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  padding: 0 20px 0 4px;
+  background: transparent;
+  color: #68756d;
+  font-size: 9px;
+}
+
+.dataset-selector select:hover {
+  border-color: #dbe5dd;
+  background: #f8faf8;
+}
+
+@media (max-width: 1000px) {
+  .dataset-selector select {
+    max-width: 26vw;
+  }
+}
+
+@media (max-width: 700px) {
+  .dataset-selector select {
+    max-width: 58vw;
+  }
+}

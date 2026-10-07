@@ -13,9 +13,7 @@ export function PageHeading({ activeView, datasetCount }: PageHeadingProps) {
       <div>
         <div className="eyebrow">CAMPAIGN ANALYTICS</div>
         <h1>{dashboard ? "Performance overview" : "Data library"}</h1>
-        <p>{dashboard ? "Explore results across your imported campaign data." : "Imported source files and worksheet dimensions."}</p>
       </div>
-      <div className="period-label"><span className="period-mark" />{datasetCount} source tables</div>
     </div>
   );
 }

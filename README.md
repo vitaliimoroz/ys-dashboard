@@ -1,4 +1,4 @@
-# YouScan Campaign Dashboard
+# IScan Campaign Dashboard
 
 A TypeScript monorepo for viewing campaign data from CSV and Excel files. The API parses and stores source tables in PostgreSQL, exposes dataset and widget endpoints, and generates randomized data for charts created in the UI. The React dashboard displays the imported sources and lets users create, edit, and delete widgets.
 

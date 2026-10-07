@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
-import { ChevronDown, Database, Pencil, RefreshCw, Trash2, X } from "lucide-react";
+import { Pencil, RefreshCw, Trash2, X } from "lucide-react";
 import type {
   DatasetSummary,
   PatchWidgetBody,
   WidgetDetail,
   WidgetListItem,
 } from "@ys-dashboard/shared";
-import { chartConfigFor } from "../../utils/chart";
+import { DatasetSelector } from "../DatasetSelector";
 import { WidgetChart } from "../WidgetChart";
 import "./index.scss";
 
@@ -49,7 +49,6 @@ export function WidgetCard({ detail, datasets, busy, error, onDismissError, onPa
               if (event.key === "Escape") { setTitleDraft(detail.title); setEditingTitle(false); }
             }} aria-label="Widget title" />
           ) : <h2>{detail.title}</h2>}
-          <span className="widget-type-label">{detail.type.replaceAll("_", " ")}</span>
         </div>
         <div className="widget-actions">
           <button className="icon-button" type="button" title="Edit title" aria-label={`Edit title for ${detail.title}`} onClick={() => setEditingTitle(true)}><Pencil size={15} /></button>
@@ -58,19 +57,8 @@ export function WidgetCard({ detail, datasets, busy, error, onDismissError, onPa
       </header>
       <div className="widget-card__source">
         {detail.payload.kind === "chart" ? (
-          <label>
-            <Database size={13} aria-hidden="true" />
-            <select aria-label={`Dataset for ${detail.title}`} value={detail.datasetId ?? ""} onChange={(event) => {
-              const selected = datasets.find((item) => item.id === event.target.value);
-              void onPatch(detail.id, { datasetId: selected?.id ?? null, chartConfig: selected ? chartConfigFor(detail.type, selected.columns) : {} });
-            }}>
-              <option value="">No dataset</option>
-              {datasets.map((item) => <option key={item.id} value={item.id}>{item.name}{item.sheetName ? ` · ${item.sheetName}` : ""}</option>)}
-            </select>
-            <ChevronDown size={13} aria-hidden="true" />
-          </label>
+          <DatasetSelector detail={detail} datasets={datasets} onPatch={onPatch} />
         ) : <span><Pencil size={13} aria-hidden="true" /> Editable text</span>}
-        {dataset && <span className="row-count">{dataset.rowCount.toLocaleString()} rows</span>}
       </div>
       {busy && <div className="widget-status" role="status"><RefreshCw className="spin" size={13} /> Saving changes…</div>}
       {error && <div className="widget-error" role="alert"><span>{error}</span><button type="button" className="icon-button" aria-label={`Dismiss error for ${detail.title}`} onClick={onDismissError}><X size={13} /></button></div>}

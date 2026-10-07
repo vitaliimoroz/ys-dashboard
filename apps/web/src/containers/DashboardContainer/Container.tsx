@@ -4,21 +4,22 @@ import type { ActiveView } from "../../types/dashboard";
 import { DatasetTable } from "../../components/DatasetTable";
 import { EmptyDashboard } from "../../components/EmptyDashboard";
 import { ErrorBanner } from "../../components/ErrorBanner";
-import { MetricGrid } from "../../components/MetricGrid";
 import { PageHeading } from "../../components/PageHeading";
 import { Sidebar } from "../../components/Sidebar";
 import { TopBar } from "../../components/TopBar";
 import { WidgetGrid } from "../../components/WidgetGrid";
+
 import "./index.scss";
 
 export function DashboardContainer() {
   const [activeView, setActiveView] = useState<ActiveView>("dashboard");
   const [menuOpen, setMenuOpen] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const { datasets, widgets, loading, error, addWidget, dismissError } = useDashboardContext();
 
   return (
-    <div className="app-shell">
-      <Sidebar activeView={activeView} onChangeView={setActiveView} />
+    <div className={`app-shell${sidebarCollapsed ? " app-shell--sidebar-collapsed" : ""}`}>
+      <Sidebar activeView={activeView} onChangeView={setActiveView} onCollapsedChange={setSidebarCollapsed} />
       <main className="main-area">
         <TopBar activeView={activeView} menuOpen={menuOpen} onToggleMenu={() => setMenuOpen((open) => !open)} onSelectWidget={(type) => { setMenuOpen(false); void addWidget(type); }} />
         <div className="page-content">
@@ -26,7 +27,6 @@ export function DashboardContainer() {
           {error && <ErrorBanner message={error} onDismiss={dismissError} />}
           {activeView === "dashboard" ? (
             <>
-              <MetricGrid datasets={datasets} widgets={widgets} loading={loading} />
               {loading ? (
                 <div className="dashboard-loading-grid" aria-label="Loading dashboard"><div /><div /><div /></div>
               ) : widgets.length === 0 ? (
@@ -34,7 +34,6 @@ export function DashboardContainer() {
               ) : (
                 <WidgetGrid widgets={widgets} />
               )}
-              <footer className="page-footnote"><span className="footnote-line" />Data loaded from parsed campaign sources</footer>
             </>
           ) : <DatasetTable datasets={datasets} loading={loading} />}
         </div>
