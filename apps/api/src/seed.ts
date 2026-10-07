@@ -2,9 +2,10 @@ import { readFile, readdir } from "node:fs/promises";
 import { basename, extname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { eq } from "drizzle-orm";
+import type { ChartWidgetType } from "@ys-dashboard/shared";
 import { createDb } from "./db/client.js";
-import { datasets } from "./db/schema.js";
-import { parseCsvBuffer, parseXlsxSheetsBuffer } from "./imports/parser.js";
+import { datasets, widgets } from "./db/schema.js";
+import { inferChartConfig, parseCsvBuffer, parseXlsxSheetsBuffer } from "./imports/parser.js";
 
 const dataDirectory = fileURLToPath(new URL("../data/", import.meta.url));
 
@@ -68,6 +69,45 @@ async function seed() {
         `Imported ${sourceFilename} (${parsed.sheetName ?? "CSV"}): ${parsed.rows.length} rows`,
       );
     }
+  }
+
+  const importedDatasets = await db.select().from(datasets);
+  const existingWidgets = await db
+    .select({ datasetId: widgets.datasetId, position: widgets.position })
+    .from(widgets);
+  let nextPosition = existingWidgets.reduce(
+    (max, widget) => Math.max(max, widget.position),
+    -1,
+  ) + 1;
+
+  for (const dataset of importedDatasets) {
+    if (existingWidgets.some((widget) => widget.datasetId === dataset.id)) continue;
+
+    const sheetName = dataset.sheetName?.toLowerCase() ?? "";
+    const type: ChartWidgetType = sheetName.includes("pie")
+      ? "pie"
+      : sheetName.includes("line")
+        ? "line"
+        : dataset.sourceKind === "csv"
+          ? "stacked_bar"
+          : "bar";
+    const title = type === "pie"
+      ? "Campaign breakdown"
+      : type === "line"
+        ? "Campaign performance"
+        : type === "stacked_bar"
+          ? "Brand sentiment"
+          : dataset.name;
+
+    await db.insert(widgets).values({
+      type,
+      title,
+      position: nextPosition++,
+      datasetId: dataset.id,
+      chartConfig: inferChartConfig(type, dataset.columns, dataset.rows),
+      content: null,
+    });
+    console.log(`Created default ${type} widget for ${dataset.name}`);
   }
 }
 
