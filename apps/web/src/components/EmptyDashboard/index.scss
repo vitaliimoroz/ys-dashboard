@@ -1,4 +1,32 @@
-.empty-state { min-height: 280px; display: grid; justify-items: center; align-content: center; padding: 28px; border: 1px dashed #ccd9cf; border-radius: 6px; background: rgba(255,255,255,.72); text-align: center; }
-.empty-icon { width: 42px; height: 42px; display: grid; place-items: center; border-radius: 50%; background: #e3eee8; color: #347363; }
-.empty-state h2 { margin: 14px 0 5px; color: #304237; font: 500 17px "Space Grotesk", sans-serif; }
-.empty-state p { margin: 0 0 16px; color: #859088; font-size: 11px; }
+.empty-state {
+  min-height: 280px;
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  padding: 28px;
+  border: 1px dashed #ccd9cf;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.72);
+  text-align: center;
+}
+.empty-icon {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: #e3eee8;
+  color: #347363;
+}
+.empty-state h2 {
+  margin: 14px 0 5px;
+  color: #304237;
+  font:
+    500 17px "Space Grotesk",
+    sans-serif;
+}
+.empty-state p {
+  margin: 0 0 16px;
+  color: #859088;
+  font-size: 11px;
+}

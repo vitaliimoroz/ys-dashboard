@@ -14,10 +14,13 @@
     "build": "npm run build -w @ys-dashboard/shared && npm run build -w @ys-dashboard/api && npm run build -w @ys-dashboard/web",
     "typecheck": "npm run typecheck --workspaces --if-present",
     "test": "npm run test --workspaces --if-present",
-    "db:migrate": "npm run db:migrate -w @ys-dashboard/api"
+    "db:migrate": "npm run db:migrate -w @ys-dashboard/api",
+    "format:scss": "prettier --write \"apps/web/src/**/*.scss\"",
+    "format:scss:check": "prettier --check \"apps/web/src/**/*.scss\""
   },
   "devDependencies": {
     "concurrently": "^9.2.1",
+    "prettier": "^3.9.9",
     "typescript": "^5.9.3"
   }
 }

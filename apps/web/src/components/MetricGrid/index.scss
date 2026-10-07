@@ -1,15 +1,67 @@
-.metric-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 13px; margin-bottom: 17px; }
-.metric-card { min-height: 108px; padding: 15px 17px 13px; background: var(--paper); border: 1px solid var(--line); border-radius: 6px; box-shadow: 0 2px 4px rgba(30,55,40,.025); }
-.metric-card--accent { border-top: 2px solid #d8765d; padding-top: 14px; }
-.metric-label { display: block; color: #88928c; font-size: 9px; letter-spacing: .8px; font-weight: 700; }
-.metric-card > strong { display: block; margin-top: 5px; color: #26382f; font: 500 25px/1.2 "Space Grotesk", sans-serif; }
-.metric-foot { display: flex; align-items: center; gap: 6px; margin-top: 8px; color: #8a958e; font-size: 10px; }
-.metric-foot svg { color: #628778; }
+.metric-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 13px;
+  margin-bottom: 17px;
+}
+.metric-card {
+  min-height: 108px;
+  padding: 15px 17px 13px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(30, 55, 40, 0.025);
+}
+.metric-card--accent {
+  border-top: 2px solid #d8765d;
+  padding-top: 14px;
+}
+.metric-label {
+  display: block;
+  color: #88928c;
+  font-size: 9px;
+  letter-spacing: 0.8px;
+  font-weight: 700;
+}
+.metric-card > strong {
+  display: block;
+  margin-top: 5px;
+  color: #26382f;
+  font:
+    500 25px/1.2 "Space Grotesk",
+    sans-serif;
+}
+.metric-foot {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+  color: #8a958e;
+  font-size: 10px;
+}
+.metric-foot svg {
+  color: #628778;
+}
 @media (max-width: 700px) {
-  .metric-grid { gap: 7px; }
-  .metric-card { min-height: 91px; padding: 11px 9px; }
-  .metric-label { font-size: 7px; letter-spacing: .4px; }
-  .metric-card > strong { font-size: 21px; }
-  .metric-foot { gap: 4px; font-size: 8px; }
-  .metric-foot svg { width: 12px; }
+  .metric-grid {
+    gap: 7px;
+  }
+  .metric-card {
+    min-height: 91px;
+    padding: 11px 9px;
+  }
+  .metric-label {
+    font-size: 7px;
+    letter-spacing: 0.4px;
+  }
+  .metric-card > strong {
+    font-size: 21px;
+  }
+  .metric-foot {
+    gap: 4px;
+    font-size: 8px;
+  }
+  .metric-foot svg {
+    width: 12px;
+  }
 }

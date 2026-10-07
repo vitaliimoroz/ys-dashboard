@@ -16,34 +16,134 @@
   --gold: #c39136;
 }
 
-* { box-sizing: border-box; }
-body { margin: 0; min-width: 320px; min-height: 100vh; }
-button, input, textarea, select { font: inherit; }
-button { cursor: pointer; }
-button:disabled { cursor: wait; opacity: .72; }
-button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 3px solid #8ac2b5; outline-offset: 2px; }
-.app-shell { min-height: 100vh; display: grid; grid-template-columns: 236px minmax(0, 1fr); background-color: var(--canvas); background-image: radial-gradient(#dce6de 0.7px, transparent 0.7px); background-size: 18px 18px; }
-.main-area { min-width: 0; }
-.page-content { max-width: 1500px; margin: 0 auto; padding: 34px 36px 30px; }
-.icon-button { width: 31px; height: 31px; display: inline-grid; place-items: center; border: 1px solid transparent; background: transparent; color: #75817a; border-radius: 5px; }
-.icon-button:hover { border-color: var(--line); background: #f7f9f7; color: var(--ink); }
-.icon-button--danger:hover { border-color: #f1d9d4; background: #fff6f4; color: var(--coral); }
-.primary-button { min-height: 36px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 0 12px; border: 1px solid #225e51; border-radius: 5px; color: white; background: #28796d; font-size: 11px; font-weight: 600; box-shadow: 0 1px 1px rgba(20,50,40,.12); }
-.primary-button:hover { background: #226a5e; }
-@keyframes appear { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
-@keyframes breathe { to { background: #eaf0eb; } }
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+}
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+button {
+  cursor: pointer;
+}
+button:disabled {
+  cursor: wait;
+  opacity: 0.72;
+}
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 3px solid #8ac2b5;
+  outline-offset: 2px;
+}
+.app-shell {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 236px minmax(0, 1fr);
+  background-color: var(--canvas);
+  background-image: radial-gradient(#dce6de 0.7px, transparent 0.7px);
+  background-size: 18px 18px;
+}
+.main-area {
+  min-width: 0;
+}
+.page-content {
+  max-width: 1500px;
+  margin: 0 auto;
+  padding: 34px 36px 30px;
+}
+.icon-button {
+  width: 31px;
+  height: 31px;
+  display: inline-grid;
+  place-items: center;
+  border: 1px solid transparent;
+  background: transparent;
+  color: #75817a;
+  border-radius: 5px;
+}
+.icon-button:hover {
+  border-color: var(--line);
+  background: #f7f9f7;
+  color: var(--ink);
+}
+.icon-button--danger:hover {
+  border-color: #f1d9d4;
+  background: #fff6f4;
+  color: var(--coral);
+}
+.primary-button {
+  min-height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 12px;
+  border: 1px solid #225e51;
+  border-radius: 5px;
+  color: white;
+  background: #28796d;
+  font-size: 11px;
+  font-weight: 600;
+  box-shadow: 0 1px 1px rgba(20, 50, 40, 0.12);
+}
+.primary-button:hover {
+  background: #226a5e;
+}
+@keyframes appear {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes breathe {
+  to {
+    background: #eaf0eb;
+  }
+}
 
 @media (max-width: 1000px) {
-  .app-shell { grid-template-columns: 205px minmax(0, 1fr); }
-  .page-content { padding: 28px 24px; }
+  .app-shell {
+    grid-template-columns: 205px minmax(0, 1fr);
+  }
+  .page-content {
+    padding: 28px 24px;
+  }
 }
 
 @media (max-width: 700px) {
-  .app-shell { display: block; }
-  .primary-button { min-height: 33px; padding: 0 9px; font-size: 10px; }
-  .page-content { padding: 22px 14px 25px; }
+  .app-shell {
+    display: block;
+  }
+  .primary-button {
+    min-height: 33px;
+    padding: 0 9px;
+    font-size: 10px;
+  }
+  .page-content {
+    padding: 22px 14px 25px;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+  }
 }
