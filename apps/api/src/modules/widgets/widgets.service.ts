@@ -7,7 +7,11 @@ import {
   type WidgetDetail,
 } from "@ys-dashboard/shared";
 import { inferChartConfig, type ParsedRow } from "../../imports/parser.js";
-import type { DashboardStore, NewDatasetRow, WidgetRow } from "../../db/store.js";
+import type { DatasetRepository, NewDatasetRow } from "../datasets/datasets.repository.js";
+import type {
+  WidgetRepository,
+  WidgetRow,
+} from "./widgets.repository.js";
 
 function toWidgetListItem(widget: WidgetRow) {
   return {
@@ -49,7 +53,10 @@ function chartSeries(
   return valueKey ? [{ key: valueKey, label: valueKey }] : [];
 }
 
-async function toWidgetDetail(widget: WidgetRow, store: DashboardStore): Promise<WidgetDetail> {
+async function toWidgetDetail(
+  widget: WidgetRow,
+  datasetRepository: DatasetRepository,
+): Promise<WidgetDetail> {
   if (widget.type === "text") {
     return {
       ...toWidgetListItem(widget),
@@ -59,7 +66,9 @@ async function toWidgetDetail(widget: WidgetRow, store: DashboardStore): Promise
     };
   }
 
-  const dataset = widget.datasetId ? await store.getDataset(widget.datasetId) : null;
+  const dataset = widget.datasetId
+    ? await datasetRepository.getDataset(widget.datasetId)
+    : null;
   const chartConfig =
     widget.chartConfig ??
     (dataset ? inferChartConfig(widget.type, dataset.columns, dataset.rows) : null);
@@ -166,24 +175,32 @@ function randomChartConfig(type: ChartWidgetType): ChartConfig {
   return { xKey: "Category", yKey: "Value" };
 }
 
-export async function listWidgets(store: DashboardStore) {
-  return (await store.listWidgets()).map(toWidgetListItem);
+export async function listWidgets(repository: WidgetRepository) {
+  return (await repository.listWidgets()).map(toWidgetListItem);
 }
 
-export async function getWidgetDetail(store: DashboardStore, id: string) {
-  const widget = await store.getWidget(id);
-  return widget ? toWidgetDetail(widget, store) : null;
+export async function getWidgetDetail(
+  widgetRepository: WidgetRepository,
+  datasetRepository: DatasetRepository,
+  id: string,
+) {
+  const widget = await widgetRepository.getWidget(id);
+  return widget ? toWidgetDetail(widget, datasetRepository) : null;
 }
 
-export async function createWidget(store: DashboardStore, input: CreateWidgetBody) {
+export async function createWidget(
+  widgetRepository: WidgetRepository,
+  datasetRepository: DatasetRepository,
+  input: CreateWidgetBody,
+) {
   const { type, title } = input;
   const chartType = type === "text" ? null : type;
   const chartTitle = title ?? defaultTitles[type];
   const dataset = chartType
-    ? await store.createDataset(createRandomChartDataset(chartType, chartTitle))
+    ? await datasetRepository.createDataset(createRandomChartDataset(chartType, chartTitle))
     : null;
-  const existingWidgets = await store.listWidgets();
-  const widget = await store.createWidget({
+  const existingWidgets = await widgetRepository.listWidgets();
+  const widget = await widgetRepository.createWidget({
     type,
     title: chartTitle,
     position: existingWidgets.reduce((max, item) => Math.max(max, item.position), -1) + 1,
@@ -192,11 +209,16 @@ export async function createWidget(store: DashboardStore, input: CreateWidgetBod
     content: type === "text" ? "" : null,
   });
 
-  return toWidgetDetail(widget, store);
+  return toWidgetDetail(widget, datasetRepository);
 }
 
-export async function updateWidget(store: DashboardStore, id: string, patch: PatchWidgetBody) {
-  const current = await store.getWidget(id);
+export async function updateWidget(
+  widgetRepository: WidgetRepository,
+  datasetRepository: DatasetRepository,
+  id: string,
+  patch: PatchWidgetBody,
+) {
+  const current = await widgetRepository.getWidget(id);
   if (!current) return { kind: "not-found" as const };
 
   const changesChart = patch.chartConfig !== undefined || patch.datasetId !== undefined;
@@ -206,15 +228,21 @@ export async function updateWidget(store: DashboardStore, id: string, patch: Pat
   ) {
     return { kind: "invalid-patch" as const };
   }
-  if (typeof patch.datasetId === "string" && !(await store.getDataset(patch.datasetId))) {
+  if (
+    typeof patch.datasetId === "string" &&
+    !(await datasetRepository.getDataset(patch.datasetId))
+  ) {
     return { kind: "dataset-not-found" as const };
   }
 
-  const updated = await store.updateWidget(id, patch);
+  const updated = await widgetRepository.updateWidget(id, patch);
   if (!updated) return { kind: "not-found" as const };
-  return { kind: "updated" as const, widget: await toWidgetDetail(updated, store) };
+  return {
+    kind: "updated" as const,
+    widget: await toWidgetDetail(updated, datasetRepository),
+  };
 }
 
-export function deleteWidget(store: DashboardStore, id: string) {
-  return store.deleteWidget(id);
+export function deleteWidget(repository: WidgetRepository, id: string) {
+  return repository.deleteWidget(id);
 }

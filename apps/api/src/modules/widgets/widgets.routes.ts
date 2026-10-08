@@ -1,6 +1,6 @@
 import type { FastifyInstance } from "fastify";
 import type { CreateWidgetBody, PatchWidgetBody } from "@ys-dashboard/shared";
-import type { StoreProvider } from "../store-provider.js";
+import type { RepositoryProvider } from "../repository-provider.js";
 import {
   createWidgetHandler,
   deleteWidgetHandler,
@@ -18,17 +18,17 @@ interface WidgetParams {
   id: string;
 }
 
-export function registerWidgetRoutes(app: FastifyInstance, getStore: StoreProvider) {
-  app.get("/api/widgets", listWidgetsHandler(getStore));
+export function registerWidgetRoutes(app: FastifyInstance, getRepositories: RepositoryProvider) {
+  app.get("/api/widgets", listWidgetsHandler(getRepositories));
   app.get<{ Params: WidgetParams }>(
     "/api/widgets/:id",
     { attachValidation: true, schema: { params: widgetIdParamsSchema } },
-    getWidgetHandler(getStore),
+    getWidgetHandler(getRepositories),
   );
   app.post<{ Body: CreateWidgetBody }>(
     "/api/widgets",
     { attachValidation: true, schema: { body: createWidgetBodyJsonSchema } },
-    createWidgetHandler(getStore),
+    createWidgetHandler(getRepositories),
   );
   app.patch<{ Params: WidgetParams; Body: PatchWidgetBody }>(
     "/api/widgets/:id",
@@ -36,11 +36,11 @@ export function registerWidgetRoutes(app: FastifyInstance, getStore: StoreProvid
       attachValidation: true,
       schema: { params: widgetIdParamsSchema, body: patchWidgetBodyJsonSchema },
     },
-    updateWidgetHandler(getStore),
+    updateWidgetHandler(getRepositories),
   );
   app.delete<{ Params: WidgetParams }>(
     "/api/widgets/:id",
     { attachValidation: true, schema: { params: widgetIdParamsSchema } },
-    deleteWidgetHandler(getStore),
+    deleteWidgetHandler(getRepositories),
   );
 }

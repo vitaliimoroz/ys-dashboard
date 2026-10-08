@@ -1,8 +1,7 @@
 import { readFile } from "node:fs/promises";
 import { basename, extname } from "node:path";
-import { eq } from "drizzle-orm";
 import { createDb, type Database } from "../db/client.js";
-import { datasets } from "../db/schema.js";
+import { createDatasetRepository } from "../modules/datasets/datasets.repository.js";
 import { parseCsvBuffer, parseXlsxSheetsBuffer, type ParsedTable } from "./parser.js";
 
 export interface ImportedTableResult {
@@ -23,6 +22,7 @@ export async function importFiles(
     throw new Error("Provide at least one .csv or .xlsx file path");
   }
 
+  const datasetRepository = createDatasetRepository(db);
   const results: ImportedTableResult[] = [];
   for (const filePath of filePaths) {
     const sourceFilename = basename(filePath);
@@ -41,31 +41,15 @@ export async function importFiles(
       const name = table.sheetName
         ? `${basename(sourceFilename, extension)} - ${table.sheetName}`
         : basename(sourceFilename, extension);
-      const matches = await db
-        .select({ id: datasets.id, sheetName: datasets.sheetName })
-        .from(datasets)
-        .where(eq(datasets.sourceFilename, sourceFilename));
-      const existingTable = matches.find((item) => item.sheetName === table.sheetName);
-
-      if (existingTable) {
-        await db.update(datasets).set({
-          name,
-          sourceKind,
-          columns: table.columns,
-          rowCount: table.rows.length,
-          rows: table.rows,
-        }).where(eq(datasets.id, existingTable.id));
-      } else {
-        await db.insert(datasets).values({
-          name,
-          sourceFilename,
-          sheetName: table.sheetName,
-          sourceKind,
-          columns: table.columns,
-          rowCount: table.rows.length,
-          rows: table.rows,
-        });
-      }
+      const action = await datasetRepository.upsertBySource({
+        name,
+        sourceFilename,
+        sheetName: table.sheetName,
+        sourceKind,
+        columns: table.columns,
+        rowCount: table.rows.length,
+        rows: table.rows,
+      });
 
       results.push({
         sourceFilename,
@@ -74,7 +58,7 @@ export async function importFiles(
         sourceKind,
         rowCount: table.rows.length,
         columnCount: table.columns.length,
-        action: existingTable ? "updated" : "inserted",
+        action,
       });
     }
   }

@@ -1,6 +1,6 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
 import type { CreateWidgetBody, PatchWidgetBody } from "@ys-dashboard/shared";
-import type { StoreProvider } from "../store-provider.js";
+import type { RepositoryProvider } from "../repository-provider.js";
 import {
   createWidget,
   deleteWidget,
@@ -17,36 +17,51 @@ function validationError(reply: FastifyReply, request: FastifyRequest) {
   return reply.code(400).send({ error: request.validationError?.message ?? "Invalid request" });
 }
 
-export function listWidgetsHandler(getStore: StoreProvider) {
-  return async (_request: FastifyRequest, _reply: FastifyReply) => listWidgets(getStore());
+export function listWidgetsHandler(getRepositories: RepositoryProvider) {
+  return async (_request: FastifyRequest, _reply: FastifyReply) =>
+    listWidgets(getRepositories().widgets);
 }
 
-export function getWidgetHandler(getStore: StoreProvider) {
+export function getWidgetHandler(getRepositories: RepositoryProvider) {
   return async (request: FastifyRequest<{ Params: WidgetParams }>, reply: FastifyReply) => {
     if (request.validationError) return validationError(reply, request);
-    const widget = await getWidgetDetail(getStore(), request.params.id);
+    const repositories = getRepositories();
+    const widget = await getWidgetDetail(
+      repositories.widgets,
+      repositories.datasets,
+      request.params.id,
+    );
     if (!widget) return reply.code(404).send({ error: "Widget not found" });
     return widget;
   };
 }
 
-export function createWidgetHandler(getStore: StoreProvider) {
+export function createWidgetHandler(getRepositories: RepositoryProvider) {
   return async (
     request: FastifyRequest<{ Body: CreateWidgetBody }>,
     reply: FastifyReply,
   ) => {
     if (request.validationError) return validationError(reply, request);
-    return reply.code(201).send(await createWidget(getStore(), request.body));
+    const repositories = getRepositories();
+    return reply.code(201).send(
+      await createWidget(repositories.widgets, repositories.datasets, request.body),
+    );
   };
 }
 
-export function updateWidgetHandler(getStore: StoreProvider) {
+export function updateWidgetHandler(getRepositories: RepositoryProvider) {
   return async (
     request: FastifyRequest<{ Params: WidgetParams; Body: PatchWidgetBody }>,
     reply: FastifyReply,
   ) => {
     if (request.validationError) return validationError(reply, request);
-    const result = await updateWidget(getStore(), request.params.id, request.body);
+    const repositories = getRepositories();
+    const result = await updateWidget(
+      repositories.widgets,
+      repositories.datasets,
+      request.params.id,
+      request.body,
+    );
     if (result.kind === "not-found") return reply.code(404).send({ error: "Widget not found" });
     if (result.kind === "dataset-not-found") return reply.code(404).send({ error: "Dataset not found" });
     if (result.kind === "invalid-patch") {
@@ -56,10 +71,10 @@ export function updateWidgetHandler(getStore: StoreProvider) {
   };
 }
 
-export function deleteWidgetHandler(getStore: StoreProvider) {
+export function deleteWidgetHandler(getRepositories: RepositoryProvider) {
   return async (request: FastifyRequest<{ Params: WidgetParams }>, reply: FastifyReply) => {
     if (request.validationError) return validationError(reply, request);
-    const deleted = await deleteWidget(getStore(), request.params.id);
+    const deleted = await deleteWidget(getRepositories().widgets, request.params.id);
     if (!deleted) return reply.code(404).send({ error: "Widget not found" });
     return reply.code(204).send();
   };
