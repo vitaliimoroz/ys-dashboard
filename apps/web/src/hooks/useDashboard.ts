@@ -56,6 +56,10 @@ export function useDashboard(): DashboardContextValue {
     }
   }
 
+  function removeWidget(widgetId: string) {
+    setWidgets((current) => current.filter((widget) => widget.id !== widgetId));
+  }
+
   function dismissError() {
     setError(null);
   }
@@ -68,6 +72,7 @@ export function useDashboard(): DashboardContextValue {
     creating,
     loadDashboard,
     addWidget,
+    removeWidget,
     dismissError,
   };
 }

@@ -2,9 +2,6 @@ import { useEffect, useState } from "react";
 import { Pencil, RefreshCw, Trash2, X } from "lucide-react";
 import type {
   DatasetSummary,
-  PatchWidgetBody,
-  WidgetDetail,
-  WidgetListItem,
 } from "@ys-dashboard/shared";
 import { DatasetSelector } from "../DatasetSelector";
 import { WidgetChart } from "../WidgetChart";
@@ -15,9 +12,10 @@ interface WidgetCardProps {
   id: string;
   title: string;
   datasets: DatasetSummary[];
+  onDeleted(): void;
 }
 
-export function WidgetCard({ id, title, datasets }: WidgetCardProps) {
+export function WidgetCard({ id, title, datasets, onDeleted }: WidgetCardProps) {
   const [editingTitle, setEditingTitle] = useState(false);
   const [titleDraft, setTitleDraft] = useState(title);
   const [contentDraft, setContentDraft] = useState('');
@@ -46,6 +44,10 @@ export function WidgetCard({ id, title, datasets }: WidgetCardProps) {
     }
   };
 
+  const handleDelete = async () => {
+    if (await deleteWidget()) onDeleted();
+  };
+
   const dataset = datasets.find((item) => item.id === details?.datasetId);
 
   return (loading || error || !details) ? (
@@ -68,7 +70,7 @@ export function WidgetCard({ id, title, datasets }: WidgetCardProps) {
         </div>
         <div className="widget-actions">
           <button className="icon-button" type="button" title="Edit title" aria-label={`Edit title for ${details?.title}`} onClick={() => setEditingTitle(true)}><Pencil size={15} /></button>
-          <button className="icon-button icon-button--danger" type="button" title="Delete widget" aria-label={`Delete ${details?.title}`} onClick={deleteWidget}><Trash2 size={15} /></button>
+          <button className="icon-button icon-button--danger" type="button" title="Delete widget" aria-label={`Delete ${details?.title}`} onClick={handleDelete}><Trash2 size={15} /></button>
         </div>
       </header>
       <div className="widget-card__source">

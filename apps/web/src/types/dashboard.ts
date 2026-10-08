@@ -1,9 +1,4 @@
-import type {
-  DatasetSummary,
-  PatchWidgetBody,
-  WidgetDetail,
-  WidgetListItem,
-} from "@ys-dashboard/shared";
+import type { DatasetSummary, WidgetDetail, WidgetListItem } from "@ys-dashboard/shared";
 
 export type ActiveView = "dashboard" | "datasets";
 export type ChartRow = Record<string, string | number | null>;
@@ -16,5 +11,6 @@ export interface DashboardContextValue {
   creating: boolean;
   loadDashboard(): Promise<void>;
   addWidget(type: WidgetDetail["type"]): Promise<void>;
+  removeWidget(widgetId: string): void;
   dismissError(): void;
 }

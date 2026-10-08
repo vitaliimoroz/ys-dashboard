@@ -44,15 +44,17 @@ export function useWidget(widgetId: string) {
     }
   }
 
-  async function deleteWidget() {
-    if (!window.confirm(`Delete "${details?.title}"?`)) return;
+  async function deleteWidget(): Promise<boolean> {
+    if (!window.confirm(`Delete "${details?.title}"?`)) return false;
     setError(null);
     setBusy(true);
     try {
       await apiRequest<void>(`/api/widgets/${widgetId}`, { method: "DELETE" });
       setDetails(null);
+      return true;
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Unable to delete widget");
+      return false;
     } finally {
       setBusy(false);
     }
