@@ -8,7 +8,7 @@
 
 .dataset-selector > svg:first-child {
   flex: 0 0 auto;
-  color: #698b7b;
+  color: var(--color-brand-text);
 }
 
 .dataset-selector > svg:last-child {
@@ -22,16 +22,16 @@
   height: 25px;
   appearance: none;
   border: 1px solid transparent;
-  border-radius: 3px;
+  border-radius: var(--radius-xs);
   padding: 0 20px 0 4px;
   background: transparent;
-  color: #68756d;
+  color: var(--color-text-secondary);
   font-size: 9px;
 }
 
 .dataset-selector select:hover {
-  border-color: #dbe5dd;
-  background: #f8faf8;
+  border-color: var(--color-border-strong);
+  background: var(--color-surface-hover);
 }
 
 @media (max-width: 1000px) {

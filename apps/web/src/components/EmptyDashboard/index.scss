@@ -4,9 +4,9 @@
   justify-items: center;
   align-content: center;
   padding: 28px;
-  border: 1px dashed #ccd9cf;
-  border-radius: 6px;
-  background: rgba(255, 255, 255, 0.72);
+  border: 1px dashed var(--color-border-strong);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface-empty);
   text-align: center;
 }
 .empty-icon {
@@ -15,18 +15,16 @@
   display: grid;
   place-items: center;
   border-radius: 50%;
-  background: #e3eee8;
-  color: #347363;
+  background: var(--color-surface-empty-icon);
+  color: var(--color-brand);
 }
 .empty-state h2 {
   margin: 14px 0 5px;
-  color: #304237;
-  font:
-    500 17px "Space Grotesk",
-    sans-serif;
+  color: var(--color-text-heading);
+  font: 500 17px var(--font-heading);
 }
 .empty-state p {
-  margin: 0 0 16px;
-  color: #859088;
+  margin: 0 0 var(--space-4);
+  color: var(--color-text-muted);
   font-size: 11px;
 }

@@ -113,6 +113,10 @@ To add a file format, implement a buffer parser returning `ParsedTable`, route i
 
 Chart generation and imported-file parsing are separate: creating a chart generates a new `generated` dataset; users can switch that chart to an imported dataset from its dataset selector.
 
+## Web Styling
+
+The web app's shared design tokens are CSS custom properties defined in [`apps/web/src/styles/global.scss`](./apps/web/src/styles/global.scss). Component styles should use the existing `--color-*`, `--space-*`, `--radius-*`, `--font-*`, and `--shadow-*` tokens rather than introducing repeated literal values. Add or adjust shared tokens there to evolve the dashboard's palette and spacing consistently.
+
 ## Quality Checks
 
 Run from the repository root:

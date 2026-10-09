@@ -5,9 +5,9 @@
   justify-content: space-between;
   margin-bottom: 15px;
   padding: 5px 10px 5px 13px;
-  background: #fff1ed;
-  border: 1px solid #f1cdc4;
+  background: var(--color-danger-background);
+  border: 1px solid var(--color-danger-border);
   border-radius: 5px;
-  color: #9d4334;
+  color: var(--color-danger-text);
   font-size: 11px;
 }

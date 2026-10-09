@@ -2,46 +2,44 @@
   display: flex;
   justify-content: space-between;
   align-items: end;
-  gap: 20px;
+  gap: var(--space-5);
   margin-bottom: 23px;
 }
 .eyebrow {
   margin-bottom: 7px;
-  color: #aa7159;
+  color: var(--color-text-eyebrow);
   font-size: 9px;
   font-weight: 700;
   letter-spacing: 1.1px;
 }
 .page-heading h1 {
   margin: 0;
-  color: #24342b;
-  font:
-    500 27px/1.2 "Space Grotesk",
-    sans-serif;
+  color: var(--color-text);
+  font: 500 27px/1.2 var(--font-heading);
 }
 .page-heading p {
   margin: 7px 0 0;
-  color: #7e8982;
+  color: var(--color-text-muted);
   font-size: 12px;
 }
 .period-label {
   flex: 0 0 auto;
   display: flex;
   align-items: center;
-  gap: 8px;
-  color: #78857d;
+  gap: var(--space-2);
+  color: var(--color-text-muted);
   font-size: 10px;
   padding: 7px 10px;
-  background: rgba(255, 255, 255, 0.75);
-  border: 1px solid #e2e8e3;
-  border-radius: 5px;
+  background: var(--color-surface-heading);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
 }
 .period-mark {
   display: block;
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: #ce9950;
+  background: var(--color-accent-warm);
 }
 @media (max-width: 700px) {
   .page-heading {

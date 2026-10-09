@@ -5,23 +5,23 @@
 }
 .dashboard-loading-grid > div {
   height: 376px;
-  border: 1px solid #e2e9e3;
-  border-radius: 6px;
-  background: rgba(255, 255, 255, 0.76);
+  border: 1px solid var(--color-border-loading);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface-overlay);
   animation: breathe 1.2s ease-in-out infinite alternate;
 }
 .page-footnote {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-2);
   margin-top: 19px;
-  color: #929d96;
+  color: var(--color-text-footnote);
   font-size: 9px;
 }
 .footnote-line {
   width: 15px;
   height: 1px;
-  background: #c1ccc4;
+  background: var(--color-border-footnote);
 }
 @media (max-width: 1000px) {
   .dashboard-loading-grid {

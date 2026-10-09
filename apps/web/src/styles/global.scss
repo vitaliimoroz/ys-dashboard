@@ -1,19 +1,116 @@
 :root {
-  font-family: "DM Sans", sans-serif;
-  color: #25312b;
-  background: #f3f6f2;
+  --font-body: "DM Sans", sans-serif;
+  --font-heading: "Space Grotesk", sans-serif;
+
+  font-family: var(--font-body);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
-  --ink: #25312b;
-  --muted: #7a8580;
-  --line: #e1e8e2;
-  --canvas: #f3f6f2;
-  --paper: #ffffff;
-  --forest: #203b32;
-  --green: #28796d;
-  --coral: #d85a48;
-  --gold: #c39136;
+
+  --color-text: #25312b;
+  --color-text-heading: #29382f;
+  --color-text-body: #39473e;
+  --color-text-secondary: #5f6c64;
+  --color-text-muted: #7a8580;
+  --color-text-subtle: #8d9991;
+  --color-text-faint: #a1aaa4;
+  --color-text-eyebrow: #aa7159;
+
+  --color-canvas: #f3f6f2;
+  --color-surface: #ffffff;
+  --color-surface-muted: #f7f9f7;
+  --color-surface-soft: #fafbfa;
+  --color-surface-hover: #f8faf8;
+  --color-surface-editor: #fbfcfb;
+  --color-surface-overlay: rgba(255, 255, 255, 0.76);
+  --color-surface-empty: rgba(255, 255, 255, 0.72);
+  --color-surface-topbar: rgba(255, 255, 255, 0.89);
+  --color-surface-heading: rgba(255, 255, 255, 0.75);
+  --color-surface-loading: #eaf0eb;
+  --color-surface-empty-icon: #e3eee8;
+  --color-border: #e1e8e2;
+  --color-border-subtle: #e5ebe5;
+  --color-border-strong: #dbe5dd;
+  --color-border-loading: #e2e9e3;
+  --color-border-table-row: #edf1ed;
+  --color-canvas-pattern: #dce6de;
+  --color-text-footnote: #929d96;
+  --color-border-footnote: #c1ccc4;
+
+  --color-brand-forest: #203b32;
+  --color-brand: #28796d;
+  --color-brand-hover: #226a5e;
+  --color-brand-border: #225e51;
+  --color-brand-soft: #edf4ef;
+  --color-brand-text: #507864;
+  --color-brand-light: #8ac2b5;
+  --color-brand-input: #b4cbc0;
+
+  --color-accent-warm: #ce9950;
+  --color-accent-coral: #d85a48;
+  --color-accent-gold: #f5d58a;
+  --color-accent-coral-light: #e47d60;
+  --color-success: #5da187;
+  --color-danger-text: #9d4334;
+  --color-danger-background: #fff1ed;
+  --color-danger-border: #f1cdc4;
+  --color-danger-text-soft: #9d4939;
+  --color-danger-background-soft: #fff5f2;
+  --color-danger-border-soft: #f0d1ca;
+  --color-danger-background-hover: #fff6f4;
+
+  --color-sidebar-background: var(--color-brand-forest);
+  --color-sidebar-text: #f4f8f4;
+  --color-sidebar-muted: #a8bbb1;
+  --color-sidebar-subtle: #88a297;
+  --color-sidebar-subtle-strong: #9ab2a6;
+  --color-sidebar-border: rgba(255, 255, 255, 0.12);
+  --color-sidebar-border-strong: rgba(255, 255, 255, 0.22);
+  --color-sidebar-surface: rgba(255, 255, 255, 0.055);
+  --color-sidebar-hover: rgba(255, 255, 255, 0.07);
+  --color-sidebar-active: #315447;
+  --color-sidebar-active-hover: #426b5a;
+  --color-sidebar-active-text: #dce7e0;
+  --color-sidebar-control-text: #e7f0e9;
+  --color-sidebar-nav-text: #c2d0c8;
+  --color-sidebar-connection-text: #bdcec3;
+  --color-sidebar-highlight: #e17a5b;
+  --color-sidebar-avatar: #d97a5c;
+  --color-sidebar-profile: #68877a;
+  --color-sidebar-brand-mark: #a1c8b6;
+  --color-sidebar-mark-accent: var(--color-accent-coral-light);
+  --color-sidebar-success: #8dc59d;
+  --color-sidebar-warning: #e9bb61;
+  --color-sidebar-error: #e9896d;
+  --color-sidebar-success-halo: rgba(141, 197, 157, 0.13);
+  --color-sidebar-warning-halo: rgba(233, 187, 97, 0.13);
+  --color-sidebar-error-halo: rgba(233, 137, 109, 0.13);
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-2-5: 10px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 28px;
+  --space-8: 32px;
+  --space-9: 36px;
+  --space-10: 40px;
+
+  --radius-xs: 3px;
+  --radius-sm: 4px;
+  --radius-md: 5px;
+  --radius-lg: 6px;
+  --radius-pill: 999px;
+
+  --shadow-control: 0 1px 1px rgba(20, 50, 40, 0.12);
+  --shadow-card: 0 2px 5px rgba(30, 55, 40, 0.035);
+  --shadow-popover: 0 12px 30px rgba(28, 48, 39, 0.15);
+  --shadow-sidebar: 0 2px 5px rgba(14, 36, 27, 0.22);
+
+  color: var(--color-text);
+  background: var(--color-canvas);
 }
 
 * {
@@ -42,15 +139,15 @@ a:focus-visible,
 input:focus-visible,
 textarea:focus-visible,
 select:focus-visible {
-  outline: 3px solid #8ac2b5;
+  outline: 3px solid var(--color-brand-light);
   outline-offset: 2px;
 }
 .app-shell {
   min-height: 100vh;
   display: grid;
   grid-template-columns: 236px minmax(0, 1fr);
-  background-color: var(--canvas);
-  background-image: radial-gradient(#dce6de 0.7px, transparent 0.7px);
+  background-color: var(--color-canvas);
+  background-image: radial-gradient(var(--color-canvas-pattern) 0.7px, transparent 0.7px);
   background-size: 18px 18px;
   transition: grid-template-columns 180ms ease;
 }
@@ -63,7 +160,7 @@ select:focus-visible {
 .page-content {
   max-width: 1500px;
   margin: 0 auto;
-  padding: 34px 36px 30px;
+  padding: 34px var(--space-9) 30px;
 }
 .icon-button {
   width: 31px;
@@ -72,36 +169,36 @@ select:focus-visible {
   place-items: center;
   border: 1px solid transparent;
   background: transparent;
-  color: #75817a;
-  border-radius: 5px;
+  color: var(--color-text-muted);
+  border-radius: var(--radius-md);
 }
 .icon-button:hover {
-  border-color: var(--line);
-  background: #f7f9f7;
-  color: var(--ink);
+  border-color: var(--color-border);
+  background: var(--color-surface-muted);
+  color: var(--color-text);
 }
 .icon-button--danger:hover {
-  border-color: #f1d9d4;
-  background: #fff6f4;
-  color: var(--coral);
+  border-color: var(--color-danger-border);
+  background: var(--color-danger-background-hover);
+  color: var(--color-accent-coral);
 }
 .primary-button {
   min-height: 36px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  padding: 0 12px;
-  border: 1px solid #225e51;
-  border-radius: 5px;
+  gap: var(--space-2);
+  padding: 0 var(--space-3);
+  border: 1px solid var(--color-brand-border);
+  border-radius: var(--radius-md);
   color: white;
-  background: #28796d;
+  background: var(--color-brand);
   font-size: 11px;
   font-weight: 600;
-  box-shadow: 0 1px 1px rgba(20, 50, 40, 0.12);
+  box-shadow: var(--shadow-control);
 }
 .primary-button:hover {
-  background: #226a5e;
+  background: var(--color-brand-hover);
 }
 @keyframes appear {
   from {
@@ -115,7 +212,7 @@ select:focus-visible {
 }
 @keyframes breathe {
   to {
-    background: #eaf0eb;
+    background: var(--color-surface-loading);
   }
 }
 
@@ -124,7 +221,7 @@ select:focus-visible {
     grid-template-columns: 205px minmax(0, 1fr);
   }
   .page-content {
-    padding: 28px 24px;
+    padding: 28px var(--space-6);
   }
 }
 
@@ -137,7 +234,7 @@ select:focus-visible {
   }
   .primary-button {
     min-height: 33px;
-    padding: 0 9px;
+    padding: 0 var(--space-2);
     font-size: 10px;
   }
   .page-content {
