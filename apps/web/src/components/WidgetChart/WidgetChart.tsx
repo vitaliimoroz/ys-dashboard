@@ -35,7 +35,13 @@ export function WidgetChart({ detail }: { detail: WidgetDetail }) {
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
             <Tooltip contentStyle={chartTooltipStyle} />
-            <Legend verticalAlign="middle" align="right" layout="vertical" iconType="circle" />
+            <Legend
+              verticalAlign="middle"
+              align="right"
+              layout="vertical"
+              iconType="circle"
+              wrapperStyle={{ maxHeight: 230, overflowY: "auto", overflowX: "hidden", fontSize: 11 }}
+            />
             <Pie data={rows} dataKey={valueKey} nameKey={payload.xKey} innerRadius={54} outerRadius={88} paddingAngle={3}>
               {rows.map((row, index) => (
                 <Cell key={String(row[payload.xKey] ?? index)} fill={chartColors[index % chartColors.length]} />
@@ -56,7 +62,7 @@ export function WidgetChart({ detail }: { detail: WidgetDetail }) {
             <XAxis dataKey={payload.xKey} axisLine={false} tickLine={false} tick={{ fill: "#78827d", fontSize: 11 }} tickFormatter={formatAxisDate} />
             <YAxis axisLine={false} tickLine={false} tick={{ fill: "#78827d", fontSize: 11 }} />
             <Tooltip contentStyle={chartTooltipStyle} labelFormatter={formatTooltipDate} />
-            <Legend iconType="circle" wrapperStyle={{ fontSize: 11 }} />
+            <Legend iconType="circle" wrapperStyle={{ fontSize: 11, maxHeight: 48, overflowY: "auto", overflowX: "hidden" }} />
             {series.map((item, index) => (
               <Line key={item.key} type="monotone" dataKey={item.key} name={item.label} stroke={chartColors[index % chartColors.length]} strokeWidth={2.5} dot={false} activeDot={{ r: 4 }} />
             ))}
@@ -67,7 +73,7 @@ export function WidgetChart({ detail }: { detail: WidgetDetail }) {
             <XAxis dataKey={payload.xKey} axisLine={false} tickLine={false} tick={{ fill: "#78827d", fontSize: 11 }} />
             <YAxis axisLine={false} tickLine={false} tick={{ fill: "#78827d", fontSize: 11 }} />
             <Tooltip contentStyle={chartTooltipStyle} />
-            <Legend iconType="circle" wrapperStyle={{ fontSize: 11 }} />
+            <Legend iconType="circle" wrapperStyle={{ fontSize: 11, maxHeight: 48, overflowY: "auto", overflowX: "hidden" }} />
             {series.map((item, index) => (
               <Bar key={item.key} dataKey={item.key} name={item.label} fill={chartColors[index % chartColors.length]} radius={[3, 3, 0, 0]} stackId={detail.type === "stacked_bar" ? "stack" : undefined} />
             ))}

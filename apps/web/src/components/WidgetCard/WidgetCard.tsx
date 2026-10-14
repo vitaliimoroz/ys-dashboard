@@ -5,6 +5,7 @@ import type {
 } from "@ys-dashboard/shared";
 import { DatasetSelector } from "../DatasetSelector";
 import { WidgetChart } from "../WidgetChart";
+import { WidgetText } from "../WidgetText";
 import { useWidget } from "../../hooks/useWidget";
 import "./index.scss";
 
@@ -18,15 +19,12 @@ interface WidgetCardProps {
 export function WidgetCard({ id, title, datasets, onDeleted }: WidgetCardProps) {
   const [editingTitle, setEditingTitle] = useState(false);
   const [titleDraft, setTitleDraft] = useState(title);
-  const [contentDraft, setContentDraft] = useState('');
 
   const { loading, details, busy, error, loadWidget, patchWidget, deleteWidget, dismissError } = useWidget(id);
 
   useEffect(() => {
     if (details) {
-      const textContent = details.payload.kind === "text" ? details.payload.content : "";
       setTitleDraft(details.title);
-      setContentDraft(textContent);
     }
   }, [details]);
 
@@ -34,13 +32,6 @@ export function WidgetCard({ id, title, datasets, onDeleted }: WidgetCardProps) 
     setEditingTitle(false);
     if (titleDraft.trim() && titleDraft.trim() !== details?.title) {
       patchWidget({ title: titleDraft.trim() });
-    }
-  };
-
-  const onTextareaBlur = () => {
-    const textContent = details?.payload?.kind === "text" ? details?.payload?.content : "";
-    if (contentDraft !== textContent) {
-      patchWidget({ content: contentDraft });
     }
   };
 
@@ -81,9 +72,11 @@ export function WidgetCard({ id, title, datasets, onDeleted }: WidgetCardProps) 
       {busy && <div className="widget-status" role="status"><RefreshCw className="spin" size={13} /> Saving changes…</div>}
       {error && <div className="widget-error" role="alert"><span>{error}</span><button type="button" className="icon-button" aria-label={`Dismiss error for ${details?.title}`} onClick={dismissError}><X size={13} /></button></div>}
       {details.payload.kind === "text" ? (
-        <div className="text-widget-content">
-          <textarea aria-label={`Text content for ${details?.title}`} value={contentDraft} maxLength={20_000} placeholder="Write a note…" onChange={(event) => setContentDraft(event.target.value)} onBlur={onTextareaBlur} />
-        </div>
+        <WidgetText
+          title={details.title}
+          content={details.payload.content}
+          onSave={(content) => patchWidget({ content })}
+        />
       ) : <WidgetChart detail={details} />}
     </article>
   );
