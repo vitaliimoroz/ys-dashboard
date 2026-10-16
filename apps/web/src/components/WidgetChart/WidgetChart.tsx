@@ -1,85 +1,34 @@
-import {
-  Bar,
-  BarChart,
-  CartesianGrid,
-  Cell,
-  Legend,
-  Line,
-  LineChart,
-  Pie,
-  PieChart,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from "recharts";
 import type { WidgetDetail } from "@ys-dashboard/shared";
-import { chartColors, chartRows, chartTooltipStyle, formatAxisDate, formatTooltipDate } from "../../utils/chart";
+import { chartRows } from "../../utils/chart";
+import { BarChart } from "./BarChart";
+import { LineChart } from "./LineChart";
+import { PieChart } from "./PieChart";
+import { StackedBarChart } from "./StackedBarChart";
+import type { ChartDetail } from "../../types/chart";
 import "./index.scss";
 
-export function WidgetChart({ detail }: { detail: WidgetDetail }) {
-  if (detail.payload.kind !== "chart") return null;
-  const { payload } = detail;
-  const rows = chartRows(detail);
-  const series = payload.series;
+function isChartDetail(detail: WidgetDetail): detail is ChartDetail {
+  return detail.payload.kind === "chart";
+}
 
-  if (!rows.length || !series.length) {
+export function WidgetChart({ detail }: { detail: WidgetDetail }) {
+  if (!isChartDetail(detail)) return null;
+  const rows = chartRows(detail);
+
+  if (!rows.length || !detail.payload.series.length) {
     return <div className="chart-empty">No rows are available for this chart.</div>;
   }
 
-  if (detail.type === "pie") {
-    const valueKey = detail.chartConfig?.valueKey ?? detail.chartConfig?.yKey ?? series[0]?.key;
-    if (!valueKey) return <div className="chart-empty">Choose a value column.</div>;
-    return (
-      <div className="chart-area chart-area--pie">
-        <ResponsiveContainer width="100%" height="100%">
-          <PieChart>
-            <Tooltip contentStyle={chartTooltipStyle} />
-            <Legend
-              verticalAlign="middle"
-              align="right"
-              layout="vertical"
-              iconType="circle"
-              wrapperStyle={{ maxHeight: 230, overflowY: "auto", overflowX: "hidden", fontSize: 11 }}
-            />
-            <Pie data={rows} dataKey={valueKey} nameKey={payload.xKey} innerRadius={54} outerRadius={88} paddingAngle={3}>
-              {rows.map((row, index) => (
-                <Cell key={String(row[payload.xKey] ?? index)} fill={chartColors[index % chartColors.length]} />
-              ))}
-            </Pie>
-          </PieChart>
-        </ResponsiveContainer>
-      </div>
-    );
+  switch (detail.type) {
+    case "line":
+      return <LineChart detail={detail} rows={rows} />;
+    case "bar":
+      return <BarChart detail={detail} rows={rows} />;
+    case "stacked_bar":
+      return <StackedBarChart detail={detail} rows={rows} />;
+    case "pie":
+      return <PieChart detail={detail} rows={rows} />;
+    default:
+      return null;
   }
-
-  return (
-    <div className="chart-area">
-      <ResponsiveContainer width="100%" height="100%">
-        {detail.type === "line" ? (
-          <LineChart data={rows} margin={{ top: 8, right: 10, bottom: 0, left: -18 }}>
-            <CartesianGrid stroke="#e9eeea" vertical={false} />
-            <XAxis dataKey={payload.xKey} axisLine={false} tickLine={false} tick={{ fill: "#78827d", fontSize: 11 }} tickFormatter={formatAxisDate} />
-            <YAxis axisLine={false} tickLine={false} tick={{ fill: "#78827d", fontSize: 11 }} />
-            <Tooltip contentStyle={chartTooltipStyle} labelFormatter={formatTooltipDate} />
-            <Legend iconType="circle" wrapperStyle={{ fontSize: 11, maxHeight: 48, overflowY: "auto", overflowX: "hidden" }} />
-            {series.map((item, index) => (
-              <Line key={item.key} type="monotone" dataKey={item.key} name={item.label} stroke={chartColors[index % chartColors.length]} strokeWidth={2.5} dot={false} activeDot={{ r: 4 }} />
-            ))}
-          </LineChart>
-        ) : (
-          <BarChart data={rows} margin={{ top: 8, right: 10, bottom: 0, left: -18 }}>
-            <CartesianGrid stroke="#e9eeea" vertical={false} />
-            <XAxis dataKey={payload.xKey} axisLine={false} tickLine={false} tick={{ fill: "#78827d", fontSize: 11 }} />
-            <YAxis axisLine={false} tickLine={false} tick={{ fill: "#78827d", fontSize: 11 }} />
-            <Tooltip contentStyle={chartTooltipStyle} />
-            <Legend iconType="circle" wrapperStyle={{ fontSize: 11, maxHeight: 48, overflowY: "auto", overflowX: "hidden" }} />
-            {series.map((item, index) => (
-              <Bar key={item.key} dataKey={item.key} name={item.label} fill={chartColors[index % chartColors.length]} radius={[3, 3, 0, 0]} stackId={detail.type === "stacked_bar" ? "stack" : undefined} />
-            ))}
-          </BarChart>
-        )}
-      </ResponsiveContainer>
-    </div>
-  );
 }
